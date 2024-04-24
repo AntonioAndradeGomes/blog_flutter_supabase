@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 class AuthGradientButton extends StatelessWidget {
   final String buttonText;
+  final GestureTapCallback? onTap;
   const AuthGradientButton({
     super.key,
     required this.buttonText,
+    this.onTap,
   });
 
   @override
@@ -30,7 +32,7 @@ class AuthGradientButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () {},
+          onTap: onTap,
           child: Center(
             child: Text(
               buttonText,
