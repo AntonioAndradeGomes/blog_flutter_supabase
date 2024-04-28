@@ -9,10 +9,10 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthSuccess extends AuthState {
-  final String uid;
+  final UserEntity user;
 
   AuthSuccess(
-    this.uid,
+    this.user,
   );
 }
 

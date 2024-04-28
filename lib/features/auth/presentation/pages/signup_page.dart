@@ -1,4 +1,6 @@
 import 'package:blog_app/core/theme/app_pallete.dart';
+import 'package:blog_app/core/utils/show_snackbar.dart';
+import 'package:blog_app/core/widgets/loader.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/auth/presentation/widgets/auth_form_field.dart';
 import 'package:blog_app/features/auth/presentation/widgets/auth_gradient_button.dart';
@@ -39,87 +41,104 @@ class _SignUpPageState extends State<SignUpPage> {
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(15),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Cadastrar',
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  AuthFormField(
-                    hintText: 'Nome',
-                    controller: _nameController,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  AuthFormField(
-                    hintText: 'Email',
-                    controller: _emailController,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  AuthFormField(
-                    hintText: 'Senha',
-                    controller: _passwordController,
-                    isObscureText: true,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  AuthGradientButton(
-                    buttonText: 'Cadastrar',
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        FocusScope.of(context).unfocus();
-                        context.read<AuthBloc>().add(
-                              AuthSignUp(
-                                email: _emailController.text.trim(),
-                                password: _passwordController.text,
-                                name: _nameController.text.trim(),
+            child: BlocConsumer<AuthBloc, AuthState>(
+              listener: (_, state) {
+                if (state is AuthFailure) {
+                  showSnackBar(
+                    context: context,
+                    content: state.message,
+                    backgroundColor: Colors.red,
+                  );
+                }
+              },
+              builder: (_, state) {
+                return Form(
+                  canPop: state is! AuthLoading,
+                  key: _formKey,
+                  child: state is AuthLoading
+                      ? const Loader()
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Cadastrar',
+                              style: TextStyle(
+                                fontSize: 50,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                      }
-                    },
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Já tem uma conta? ',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        children: [
-                          TextSpan(
-                            text: 'Entre',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  color: AppPallete.gradient2,
-                                  fontWeight: FontWeight.bold,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            AuthFormField(
+                              hintText: 'Nome',
+                              controller: _nameController,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            AuthFormField(
+                              hintText: 'Email',
+                              controller: _emailController,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            AuthFormField(
+                              hintText: 'Senha',
+                              controller: _passwordController,
+                              isObscureText: true,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            AuthGradientButton(
+                              buttonText: 'Cadastrar',
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  FocusScope.of(context).unfocus();
+                                  context.read<AuthBloc>().add(
+                                        AuthSignUp(
+                                          email: _emailController.text.trim(),
+                                          password: _passwordController.text,
+                                          name: _nameController.text.trim(),
+                                        ),
+                                      );
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'Já tem uma conta? ',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                  children: [
+                                    TextSpan(
+                                      text: 'Entre',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            color: AppPallete.gradient2,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                              ),
+                            )
+                          ],
+                        ),
+                );
+              },
             ),
           ),
         ),
