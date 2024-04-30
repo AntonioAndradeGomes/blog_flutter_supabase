@@ -2,6 +2,7 @@ import 'package:blog_app/features/auth/data/datasources/auth_datasource.dart';
 import 'package:blog_app/features/auth/data/datasources/remote/auth_remote_datasource_imp.dart';
 import 'package:blog_app/features/auth/data/repositories/auth_repository_imp.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
+import 'package:blog_app/features/auth/domain/usecases/user_login.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,9 +42,16 @@ void _initAuth() {
     ),
   );
 
+  serviceLocator.registerSingleton<UserLogin>(
+    UserLogin(
+      serviceLocator<AuthRepository>(),
+    ),
+  );
+
   serviceLocator.registerLazySingleton(
     () => AuthBloc(
       userSignUp: serviceLocator<UserSignUp>(),
+      userLogin: serviceLocator<UserLogin>(),
     ),
   );
 }

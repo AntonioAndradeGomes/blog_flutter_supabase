@@ -15,11 +15,20 @@ class AuthRemoteDatasourceImp extends AuthDatasource {
     required String email,
     required String password,
   }) async {
-    return UserModel(
-      email: 'email',
-      name: 'name',
-      id: 'id',
-    );
+    try {
+      final response = await supabaseClient.auth.signUp(
+        password: password,
+        email: email,
+      );
+      if (response.user == null) {
+        throw const ServerException('User is null!!');
+      }
+      return UserModel.fromJson(response.user!.toJson());
+    } catch (e) {
+      throw ServerException(
+        e.toString(),
+      );
+    }
   }
 
   @override
@@ -41,7 +50,7 @@ class AuthRemoteDatasourceImp extends AuthDatasource {
           'User is null!',
         );
       }
-      print(response.user!.toJson());
+
       return UserModel.fromJson(response.user!.toJson());
     } catch (e) {
       throw ServerException(
